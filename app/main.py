@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from app.database import engine, Base, SessionLocal
@@ -8,6 +9,8 @@ from passlib.context import CryptContext
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Smart Task Management System")
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.on_event("startup")
 def startup_db_setup():
@@ -60,7 +63,7 @@ def create_task(
     db: Session = Depends(auth.database.get_db), 
     current_user: models.User = Depends(auth.get_current_user)
 ):
-    if current_user.is_admin:
+    if bool(current_user.is_admin):
         raise HTTPException(status_code=403, detail="Admins are not allowed to create tasks.")
 
     db_task = models.Task(**task.dict(), owner_id=current_user.id, is_deleted=False)
@@ -79,8 +82,8 @@ def update_task(
     db_task = db.query(models.Task).filter(models.Task.id == task_id, models.Task.owner_id == current_user.id).first()
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
-    db_task.title = task.title
-    db_task.description = task.description
+    setattr(db_task, "title", task.title)
+    setattr(db_task, "description", task.description)
     db.commit()
     return db_task
 
@@ -93,7 +96,7 @@ def move_to_trash(
     db_task = db.query(models.Task).filter(models.Task.id == task_id, models.Task.owner_id == current_user.id).first()
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
-    db_task.is_deleted = True
+    setattr(db_task, "is_deleted", True)
     db.commit()
     return {"message": "Task moved to trash"}
 
@@ -106,7 +109,7 @@ def restore_task(
     db_task = db.query(models.Task).filter(models.Task.id == task_id, models.Task.owner_id == current_user.id).first()
     if not db_task:
         raise HTTPException(status_code=404, detail="Task not found")
-    db_task.is_deleted = False
+    setattr(db_task, "is_deleted", False)
     db.commit()
     return {"message": "Task restored successfully"}
 
@@ -131,7 +134,7 @@ html_content = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/static/tailwind.js"></script>
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
