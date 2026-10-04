@@ -1,12 +1,12 @@
-#### Did you use ChatGPT/AI to build this?
+## Did you use ChatGPT/AI to build this?
 **Ans:** Yes, I used AI tools as a development assistant for faster debugging and understanding error logs, just like referencing documentation. But I made sure to understand the root cause of the schemas and authentication flow myself before implementing the fix.
 
-### What does this project does?
+## What does this project does?
 **Ans:** In this project, a user can create their account then create their tasks inside that account. They can add, edit and delete their tasks. They can also delete their account if they want.
 - There is also a "Admin" role who can view usernames of all the registered users and how many tasks they have created. But, obviously for privacy reason the admin can't see the contents of their tasks.
 The admin can also delete accounts of users.
 
-### Features of this project:
+## Features of this project:
 - User can create, edit and delete tasks in their account and they can also delete their account.
   
 - Before deleting a account by user or admin, a confirmation gets asked so that user account doesn't accidently gets deleted.
@@ -19,7 +19,7 @@ The admin can also delete accounts of users.
   
 - No user can create account with "admin" username and there is a seperate login page for admin and admin can't login from user login page.
 
-### Can you walk me through the high-level architecture of your project?
+## Can you walk me through the high-level architecture of your project?
 
 Here are 5 common ways interviewers ask the exact same high-level architecture question:
 
@@ -50,7 +50,7 @@ The backend exposes RESTful endpoints, handles data validation using Pydantic, a
   
 - **RESTful Endpoints:** Specific web URLs exposed by the backend API (such as `/api/tasks`) that follow REST architectural rules to perform operations on resources using standard HTTP methods.
 
-#### **Restful API**
+### **Restful API**
 
 You already know that, **API** (Application programming Interface) is a set of rules and protocols that lets different software applications communicate with each other.
 
@@ -72,7 +72,7 @@ In practice, following REST means:
   
 - **Standard Representation:** Resources are exchanged in a standard data format, usually **JSON**.
 
-### What is the tech stack used in this project?
+## What is the tech stack used in this project?
 **Ans:** The tech stack used in this project are:
 
 * For **backend**, FastAPI which is python web framework 
@@ -87,10 +87,10 @@ In practice, following REST means:
   
 * For **Server**, Uvicorn (ASGI)
   
-### What is ORM (Object-Relational Mapping) ?
+## What is ORM (Object-Relational Mapping) ?
 **Ans:** ORM (Object-Relational Mapping) is a programming technique that connects object-oriented code with relational databases. It maps database tables to programming classes and rows to objects, enabling developers to query, insert, and update data using native code without writing raw SQL.
 
-### Why you have choosen this technology for your project?
+## Why you have choosen this technology for your project?
 **Ans:** - I chose **FastAPI** and **PostgreSQL** because their native async support and robust relational integrity handle concurrent operations efficiently. 
 
 - **JWT and Bcrypt** provide industry-standard authentication without server overhead. 
@@ -108,15 +108,38 @@ In practice, following REST means:
   
 - **Zero-Config:** Setting up or deploying a service without writing complex build scripts, server configs, or Docker files; the platform detects your setup and runs it automatically.
 
-### GitHub pe kaise upload kiya?
+## GitHub pe kaise upload kiya?
 
-- "Maine local project directory mein Git initialize kiya using `git init`. 
-- Unnecessary files (jaise `__pycache__`, virtual environment, aur `.db` files) ko exclude karne ke liye `.gitignore` configure kiya. 
-- Uske baad saari source files ko stage kiya (`git add .`), initial commit create kiya (`git commit -m 'Initial commit'`), aur 
-- GitHub par remote repository create karke local repo ko link kiya (`git remote add origin <repo-url>`). 
-- Finally, `git push -u origin main` command se pura codebase GitHub par push kar diya.
+```
+1> git init
+2> git add .
+3> git commit -m "Commit Message"
+4> git branch -M main
+5> git remote add origin https://github.com/username/repo-name.git
+6> git push -u origin main
+```
 
-### Render pe kaise deploy kiya?
+- First I opened "Git Bash" in my local project directory, then I initialized Git using `git init`
+  command. 
+   
+- Then I configured `.gitigonre` in my folder to exclude unnecessary files like `__pycache__`, virtual environment and `.db` files. 
+
+- Then I staged (ready to upload) all files in my current folder using `git add .`
+  (Here, `.` ) means all files of current folder.
+
+- Then I created a save point of all my staged files using command 
+  `git commit -m "Commit Message"`
+
+- Then I changed my current branch name to "main" using command
+  `git branch -M main`
+  
+- Then I created a empty repositry on Github and linked my local project folder with that repositry 
+  using command `git remote add origin <repo-url>` 
+
+- Finally, I pushed my entire codebase to Github using command `git push -u origin main`.
+  (`-u` - This is upstream flag that binds your local "main" branch with remote "main" branch on github, that's why for subsequent updates you only need to write `git push` command on your Git Bash).
+
+## Render pe kaise deploy kiya?
 
 1. Render Dashboard par jaakar naya **Web Service** create kiya aur apne GitHub repository ko link kiya.
   
@@ -129,7 +152,7 @@ In practice, following REST means:
 
 4. Deploy trigger hote hi Render ne automated build run kiya aur service live ho gayi. Continuous deployment enable hone ki wajah se GitHub ke har push par yeh automatically redeploy ho jata hai."
 
-### How registration and login are working in this web application?
+## How registration and login are working in this web application (while maintaining security)?
 
 **Ans:** In this application, authentication is handled using **FastAPI, OAuth2, and JWT tokens**:
 
@@ -153,14 +176,28 @@ In practice, following REST means:
   
 * **JWT (JSON Web Token)**: Ek digitally signed, compact string hoti hai jisme user ki identity (jaise `username`, expiry time) securely encoded rehti hai. Client login ke baad ise save karta hai taaki baar-baar password na bhejna pade.
 
+A *JSON Web Token (JWT)* consists of three dot-separated Base64URL-encoded parts: the **Header** (algorithm type), **Payload** (claims/user data), and **Signature** (verification hash).
+
 * **Bcrypt (`passlib`)**: Ek strong cryptographic password-hashing algorithm (aur Python library) hai. Yeh plain text password ko one-way encrypted hash mein convert karta hai aur salt add karta hai, taaki database leak hone par bhi original password reveal na ho sake.
   
 * **`python-jose`**: Python ki ek library hai jo backend par JWT tokens ko generate (encode/sign) karne aur incoming requests par unhe verify (decode) karne ka kaam karti hai.
   
 * **`Authorization: Bearer <token>` Header**: HTTP request ka ek metadata header. Jab frontend kisi protected endpoint (jaise tasks create karna) ko call karta hai, toh woh server ko proof dene ke liye JWT token ko is header format mein bhejta hai; server verify karta hai ki request authenticated user ki taraf se hai ya nahi.
 
-### How are CRUD operations and data validation handled in FastAPI?
+## How are CRUD operations and data validation handled in FastAPI?
 **Ans:** CRUD routes use standard HTTP methods (GET, POST, PUT, DELETE). Pydantic schemas automatically validate incoming request data types and reject invalid inputs with a 422 Unprocessable Entity error before saving them to the database.
 
-### How does deployment and CI/CD work on Render?
+## How does deployment and CI/CD work on Render?
 **Ans:** My GitHub repository is linked directly to Render. Every git push to main triggers an automatic build (pip install -r requirements.txt) and starts the server via uvicorn, securely connecting to a hosted PostgreSQL database using a DATABASE_URL environment variable.
+
+## Can we check/retrieve information using POST instead of GET?
+**Ans:**
+Yes, technically we can. While **GET** is the standard HTTP method for retrieving data, **POST** is often used when query parameters are too large for URL limits or contain sensitive credentials that shouldn't appear in browser history, logs, or URLs, such as complex search filters or authentication checks.
+
+## What is the diffrence between Authentication and Authorization?
+
+**Authentication** verifies **who you are** by checking your identity, whereas **authorization** determines **what you are allowed to do** by verifying your permissions. Authentication always takes place first; authorization follows once your identity is confirmed.
+
+**Example:**
+
+Logging into a company portal using your corporate username and password is **authentication**. Once logged in, a regular employee viewing payroll data gets blocked while HR can edit it—that access control decision is **authorization**.
